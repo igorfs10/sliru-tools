@@ -1,0 +1,18 @@
+[package]
+name = "sliru-tools"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "sliru_tools_lib"
+crate-type = ["rlib", "cdylib"]
+
+[[bin]]
+name = "sliru_tools"
+path = "src/main.rs"
+
+[dependencies]
+slint = "1.13"
+
+[build-dependencies]
+slint-build = "1.13"
