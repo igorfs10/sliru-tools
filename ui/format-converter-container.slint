@@ -1,0 +1,26 @@
+import { ComboBox, TextEdit, VerticalBox } from "std-widgets.slint";
+export component FormatConverterContainer inherits Rectangle {
+    in-out property <int> idContainer;
+    HorizontalLayout {
+        VerticalBox {
+            width: 50%;
+            spacing: 10px;
+            ComboBox {
+                model: ["JSON", "YAML", "XML"];
+            }
+            TextEdit {
+
+            }
+        }
+        VerticalBox {
+            width: 50%;
+            spacing: 10px;
+            ComboBox {
+                model: ["JSON", "YAML", "XML"];
+            }
+            TextEdit {
+                
+            }
+        }
+    }
+}
