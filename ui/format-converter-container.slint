@@ -1,25 +1,58 @@
-import { ComboBox, TextEdit, VerticalBox } from "std-widgets.slint";
+import { ComboBox, TextEdit, VerticalBox, Button } from "std-widgets.slint";
 export component FormatConverterContainer inherits Rectangle {
     in-out property <int> idContainer;
-    HorizontalLayout {
-        VerticalBox {
-            width: 50%;
-            spacing: 10px;
-            ComboBox {
-                model: ["JSON", "YAML", "XML"];
-            }
-            TextEdit {
+    in-out property <int> inputFormat;
+    in-out property <int> outputFormat;
+    in-out property <string> inputText;
+    in-out property <string> outputText;
 
+    callback format-converter-execute();
+    callback format-converter-inverter();
+
+    VerticalBox {
+        HorizontalLayout {
+            VerticalBox {
+                width: 45%;
+                ComboBox {
+                    model: ["JSON", "CSV"];
+                    current-index <=> root.inputFormat;
+                }
+            }
+            VerticalBox {
+                width: 10%;
+                Button {
+                    text: "↔";
+                    clicked => root.format-converter-inverter();
+                }
+            }
+            VerticalBox {
+                width: 45%;
+                ComboBox {
+                    model: ["JSON", "CSV"];
+                    current-index <=> root.outputFormat;
+                }
             }
         }
-        VerticalBox {
-            width: 50%;
-            spacing: 10px;
-            ComboBox {
-                model: ["JSON", "YAML", "XML"];
+        HorizontalLayout {
+            VerticalBox {
+                width: 45%;
+                TextEdit {
+                    text <=> root.inputText;
+                }
             }
-            TextEdit {
-                
+            VerticalBox {
+                width: 10%;
+                alignment: center;
+                Button {
+                    text: "→";
+                    clicked => root.format-converter-execute();
+                }
+            }
+            VerticalBox {
+                width: 45%;
+                TextEdit {
+                    text <=> root.outputText;
+                }
             }
         }
     }

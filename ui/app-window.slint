@@ -3,11 +3,25 @@ import { ToolsContainer } from "tools-container.slint";
 import { FormatConverterContainer } from "format-converter-container.slint";
 
 export component AppWindow inherits Window {
-    property <int> idContainer: 0;
+    in-out property <int> idContainer: 0;
+    in-out property <int> formatConverterInputFormat;
+    in-out property <int> formatConverterOutputFormat;
+    in-out property <string> formatConverterInputText;
+    in-out property <string> formatConverterOutputText;
+
+    callback format-converter-execute();
+    callback format-converter-inverter();
+
     if(idContainer == 0):ToolsContainer{
-        idContainer: root.idContainer;
+        idContainer <=> root.idContainer;
     }
     if(idContainer == 1):FormatConverterContainer {
-        idContainer: root.idContainer;
+        idContainer <=> root.idContainer;
+        inputFormat <=> root.formatConverterInputFormat;
+        outputFormat <=> root.formatConverterOutputFormat;
+        inputText <=> root.formatConverterInputText;
+        outputText <=> root.formatConverterOutputText;
+        format-converter-execute => root.format-converter-execute();
+        format-converter-inverter => root.format-converter-inverter();
     }
 }
