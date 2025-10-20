@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
 use csv::{ReaderBuilder, WriterBuilder};
+use serde::Serialize;
 use serde_json::{Map, Value};
 
 slint::include_modules!();
@@ -91,7 +92,13 @@ pub fn start_desktop() -> Result<(), slint::PlatformError> {
 pub fn pretty_json(input: &str) -> Result<String, String> {
     let v: Value =
         serde_json::from_str(input).map_err(|e| format!("Erro ao fazer parse do JSON: {}", e))?;
-    serde_json::to_string_pretty(&v).map_err(|e| format!("Erro ao formatar JSON: {}", e))
+
+    let mut buf = Vec::new();
+    let formatter = serde_json::ser::PrettyFormatter::with_indent(b"    ");
+    let mut ser = serde_json::Serializer::with_formatter(&mut buf, formatter);
+    v.serialize(&mut ser)
+        .map_err(|e| format!("Erro ao serializar JSON: {}", e))?;
+    String::from_utf8(buf).map_err(|e| format!("Erro ao converter JSON para UTF-8: {}", e))
 }
 
 pub fn json_to_csv(json_str: &str) -> Result<String, String> {
@@ -177,5 +184,11 @@ pub fn csv_to_json(csv_str: &str) -> Result<String, String> {
         }
         out.push(Value::Object(map));
     }
-    serde_json::to_string_pretty(&out).map_err(|e| format!("Erro ao gerar JSON: {}", e))
+
+    let mut buf = Vec::new();
+    let formatter = serde_json::ser::PrettyFormatter::with_indent(b"    ");
+    let mut ser = serde_json::Serializer::with_formatter(&mut buf, formatter);
+    out.serialize(&mut ser)
+        .map_err(|e| format!("Erro ao serializar JSON: {}", e))?;
+    String::from_utf8(buf).map_err(|e| format!("Erro ao converter JSON para UTF-8: {}", e))
 }
