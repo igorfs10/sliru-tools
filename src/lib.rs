@@ -3,6 +3,7 @@ use std::collections::BTreeSet;
 use csv::{ReaderBuilder, WriterBuilder};
 use serde::Serialize;
 use serde_json::{Map, Value};
+use yaml_rust2::{YamlEmitter, YamlLoader};
 
 slint::include_modules!();
 
@@ -61,6 +62,28 @@ pub fn start_desktop() -> Result<(), slint::PlatformError> {
                 (1, 0) => {
                     // CSV para JSON
                     match csv_to_json(&input_text) {
+                        Ok(v) => {
+                            ui.set_formatConverterOutputText(v.into());
+                        }
+                        Err(e) => {
+                            ui.set_formatConverterOutputText(e.into());
+                        }
+                    }
+                }
+                (0, 2) => {
+                    // JSON para YAML
+                    match json_to_yaml(&input_text) {
+                        Ok(v) => {
+                            ui.set_formatConverterOutputText(v.into());
+                        }
+                        Err(e) => {
+                            ui.set_formatConverterOutputText(e.into());
+                        }
+                    }
+                }
+                (2, 0) => {
+                    // YAML para JSON
+                    match yaml_to_json(&input_text) {
                         Ok(v) => {
                             ui.set_formatConverterOutputText(v.into());
                         }
@@ -191,4 +214,61 @@ pub fn csv_to_json(csv_str: &str) -> Result<String, String> {
     out.serialize(&mut ser)
         .map_err(|e| format!("Erro ao serializar JSON: {}", e))?;
     String::from_utf8(buf).map_err(|e| format!("Erro ao converter JSON para UTF-8: {}", e))
+}
+
+pub fn json_to_yaml(json_str: &str) -> Result<String, String> {
+    // Parse JSON para Value
+    let value: Value = serde_json::from_str(json_str)
+        .map_err(|e| format!("Erro ao fazer parse do JSON: {}", e))?;
+    // Converte Value para string YAML
+    let yaml_str = serde_json::to_string(&value)
+        .map_err(|e| format!("Erro ao converter JSON para string: {}", e))?;
+    let docs = YamlLoader::load_from_str(&yaml_str)
+        .map_err(|e| format!("Erro ao carregar YAML: {}", e))?;
+    let mut out_str = String::new();
+    let mut emitter = YamlEmitter::new(&mut out_str);
+    for doc in docs {
+        emitter
+            .dump(&doc)
+            .map_err(|e| format!("Erro ao emitir YAML: {}", e))?;
+    }
+    Ok(out_str)
+}
+
+pub fn yaml_to_json(yaml_str: &str) -> Result<String, String> {
+    let docs = YamlLoader::load_from_str(yaml_str)
+        .map_err(|e| format!("Erro ao fazer parse do YAML: {}", e))?;
+    if docs.is_empty() {
+        return Err("YAML vazio".to_string());
+    }
+    let doc = &docs[0];
+    // Converte Yaml para Value
+    let value = yaml_to_json_value(doc);
+    serde_json::to_string_pretty(&value).map_err(|e| format!("Erro ao converter para JSON: {}", e))
+}
+
+fn yaml_to_json_value(yaml: &yaml_rust2::Yaml) -> Value {
+    use yaml_rust2::Yaml;
+    match yaml {
+        Yaml::Null => Value::Null,
+        Yaml::Boolean(b) => Value::Bool(*b),
+        Yaml::Integer(i) => Value::Number((*i).into()),
+        Yaml::Real(s) => serde_json::Number::from_f64(s.parse::<f64>().unwrap_or(0.0))
+            .map(Value::Number)
+            .unwrap_or(Value::Null),
+        Yaml::String(s) => Value::String(s.clone()),
+        Yaml::Array(arr) => Value::Array(arr.iter().map(yaml_to_json_value).collect()),
+        Yaml::Hash(h) => {
+            let mut map = serde_json::Map::new();
+            for (k, v) in h {
+                let key = match k {
+                    Yaml::String(s) => s.clone(),
+                    _ => format!("{:?}", k),
+                };
+                map.insert(key, yaml_to_json_value(v));
+            }
+            Value::Object(map)
+        }
+        _ => Value::Null,
+    }
 }
