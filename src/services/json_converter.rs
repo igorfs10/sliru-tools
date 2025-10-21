@@ -116,7 +116,8 @@ pub fn json_to_yaml(json_str: &str) -> Result<String, String> {
 pub fn json_to_xml(json_str: &str) -> Result<String, String> {
     let value: Value = serde_json::from_str(json_str)
         .map_err(|e| format!("Erro ao fazer parse do JSON: {}", e))?;
-    let mut writer = Writer::new(Cursor::new(Vec::new()));
+    // Writer com indentação de 4 espaços para saída "bonita"
+    let mut writer = Writer::new_with_indent(Cursor::new(Vec::new()), b' ', 4);
     write_value_as_xml(&mut writer, "root", &value)?;
     let result = writer.into_inner().into_inner();
     String::from_utf8(result).map_err(|e| format!("Erro ao converter XML para UTF-8: {}", e))
