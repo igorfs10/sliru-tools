@@ -1,8 +1,8 @@
 use crate::enums::format_converter::FormatConverter;
 use crate::services::csv_converter::*;
 use crate::services::json_converter::*;
-use crate::services::yaml_converter::*;
 use crate::services::xml_converter::*;
+use crate::services::yaml_converter::*;
 
 pub mod enums;
 pub mod services;
@@ -39,127 +39,70 @@ pub fn start_desktop() -> Result<(), slint::PlatformError> {
             let input_text = ui.get_formatConverterInputText();
 
             match (input_format, output_format) {
-                (FormatConverter::Json, FormatConverter::Json) => {
-                    // Pretty JSON
-                    match pretty_json(&input_text) {
-                        Ok(v) => {
-                            ui.set_formatConverterOutputText(v.into());
-                        }
-                        Err(e) => {
-                            ui.set_formatConverterOutputText(e.into());
-                        }
-                    }
-                }
-                (FormatConverter::Json, FormatConverter::Csv) => {
-                    // JSON para CSV
-                    match json_to_csv(&input_text) {
-                        Ok(v) => {
-                            ui.set_formatConverterOutputText(v.into());
-                        }
-                        Err(e) => {
-                            ui.set_formatConverterOutputText(e.into());
-                        }
-                    }
-                }
-                (FormatConverter::Json, FormatConverter::Yaml) => {
-                    // JSON para YAML
-                    match json_to_yaml(&input_text) {
-                        Ok(v) => {
-                            ui.set_formatConverterOutputText(v.into());
-                        }
-                        Err(e) => {
-                            ui.set_formatConverterOutputText(e.into());
-                        }
-                    }
-                }
-                (FormatConverter::Csv, FormatConverter::Json) => {
-                    // CSV para JSON
-                    match csv_to_json(&input_text) {
-                        Ok(v) => {
-                            ui.set_formatConverterOutputText(v.into());
-                        }
-                        Err(e) => {
-                            ui.set_formatConverterOutputText(e.into());
-                        }
-                    }
-                }
-                (FormatConverter::Csv, FormatConverter::Csv) => {
-                    // pretty CSV
-                    match pretty_csv(&input_text) {
-                        Ok(v) => {
-                            ui.set_formatConverterOutputText(v.into());
-                        }
-                        Err(e) => {
-                            ui.set_formatConverterOutputText(e.into());
-                        }
-                    }
-                }
-                (FormatConverter::Csv, FormatConverter::Yaml) => {
-                    // CSV para YAML
-                    match csv_to_yaml(&input_text) {
-                        Ok(v) => {
-                            ui.set_formatConverterOutputText(v.into());
-                        }
-                        Err(e) => {
-                            ui.set_formatConverterOutputText(e.into());
-                        }
-                    }
-                }
-                (FormatConverter::Yaml, FormatConverter::Json) => {
-                    // YAML para JSON
-                    match yaml_to_json(&input_text) {
-                        Ok(v) => {
-                            ui.set_formatConverterOutputText(v.into());
-                        }
-                        Err(e) => {
-                            ui.set_formatConverterOutputText(e.into());
-                        }
-                    }
-                }
-                (FormatConverter::Yaml, FormatConverter::Csv) => {
-                    // YAML para CSV
-                    match yaml_to_csv(&input_text) {
-                        Ok(v) => {
-                            ui.set_formatConverterOutputText(v.into());
-                        }
-                        Err(e) => {
-                            ui.set_formatConverterOutputText(e.into());
-                        }
-                    }
-                }
-                (FormatConverter::Yaml, FormatConverter::Yaml) => {
-                    // pretty YAML
-                    match pretty_yaml(&input_text) {
-                        Ok(v) => {
-                            ui.set_formatConverterOutputText(v.into());
-                        }
-                        Err(e) => {
-                            ui.set_formatConverterOutputText(e.into());
-                        }
-                    }
-                }
-                (FormatConverter::Xml, FormatConverter::Json) => {
-                    match xml_to_json(&input_text) {
-                        Ok(v) => ui.set_formatConverterOutputText(v.into()),
-                        Err(e) => ui.set_formatConverterOutputText(e.into()),
-                    }
-                }
-                (FormatConverter::Json, FormatConverter::Xml) => {
-                    match json_to_xml(&input_text) {
-                        Ok(v) => ui.set_formatConverterOutputText(v.into()),
-                        Err(e) => ui.set_formatConverterOutputText(e.into()),
-                    }
-                }
-                (FormatConverter::Xml, FormatConverter::Xml) => {
-                    // pretty XML (por enquanto apenas retorna o mesmo texto)
-                    ui.set_formatConverterOutputText(input_text.clone());
-                }
-                (FormatConverter::Csv, FormatConverter::Xml)
-                | (FormatConverter::Xml, FormatConverter::Csv)
-                | (FormatConverter::Yaml, FormatConverter::Xml)
-                | (FormatConverter::Xml, FormatConverter::Yaml) => {
-                    ui.set_formatConverterOutputText("Conversão XML/CSV/YAML não implementada".into());
-                }
+                (FormatConverter::Json, FormatConverter::Json) => match pretty_json(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Json, FormatConverter::Csv) => match json_to_csv(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Json, FormatConverter::Yaml) => match json_to_yaml(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Json, FormatConverter::Xml) => match json_to_xml(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Csv, FormatConverter::Json) => match csv_to_json(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Csv, FormatConverter::Csv) => match pretty_csv(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Csv, FormatConverter::Yaml) => match csv_to_yaml(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Csv, FormatConverter::Xml) => match csv_to_xml(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Yaml, FormatConverter::Json) => match yaml_to_json(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Yaml, FormatConverter::Csv) => match yaml_to_csv(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Yaml, FormatConverter::Yaml) => match pretty_yaml(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Yaml, FormatConverter::Xml) => match yaml_to_xml(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Xml, FormatConverter::Json) => match xml_to_json(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Xml, FormatConverter::Csv) => match xml_to_csv(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Xml, FormatConverter::Yaml) => match xml_to_yaml(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
+                (FormatConverter::Xml, FormatConverter::Xml) => match pretty_xml(&input_text) {
+                    Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                    Err(e) => ui.set_formatConverterOutputText(e.into()),
+                },
             }
         }
     });

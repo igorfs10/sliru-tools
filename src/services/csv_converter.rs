@@ -39,3 +39,7 @@ pub fn csv_to_yaml(csv_str: &str) -> Result<String, String> {
 pub fn pretty_csv(csv_str: &str) -> Result<String, String> {
     csv_to_json(csv_str).and_then(|json_str| json_converter::json_to_csv(&json_str))
 }
+
+pub fn csv_to_xml(csv_str: &str) -> Result<String, String> {
+    csv_to_json(csv_str).and_then(|json_str| json_converter::json_to_xml(&json_str))
+}

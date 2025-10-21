@@ -2,7 +2,7 @@ pub enum FormatConverter {
     Json,
     Csv,
     Yaml,
-    Xml
+    Xml,
 }
 
 impl From<i32> for FormatConverter {

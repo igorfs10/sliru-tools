@@ -1,7 +1,9 @@
-use quick_xml::events::Event;
 use quick_xml::Reader;
+use quick_xml::events::Event;
 use serde::Serialize;
 use serde_json::{Map, Value};
+
+use crate::services::json_converter;
 
 pub fn xml_to_json(xml_str: &str) -> Result<String, String> {
     let mut reader = Reader::from_str(xml_str);
@@ -25,7 +27,9 @@ pub fn xml_to_json(xml_str: &str) -> Result<String, String> {
             }
             Ok(Event::End(e)) => {
                 let tag = String::from_utf8_lossy(e.name().as_ref()).to_string();
-                let (elem_tag, mut elem_val) = stack.pop().unwrap_or_else(|| (tag.clone(), Value::Object(Map::new())));
+                let (elem_tag, mut elem_val) = stack
+                    .pop()
+                    .unwrap_or_else(|| (tag.clone(), Value::Object(Map::new())));
                 if !current_text.is_empty() {
                     if let Value::Object(ref mut map) = elem_val {
                         map.insert("_text".to_string(), parse_text_value(&current_text));
@@ -106,4 +110,16 @@ fn normalize_root_array(v: Value) -> Value {
         }
         other => other,
     }
+}
+
+pub fn pretty_xml(xml_str: &str) -> Result<String, String> {
+    xml_to_json(xml_str).and_then(|json_str| json_converter::json_to_xml(&json_str))
+}
+
+pub fn xml_to_csv(xml_str: &str) -> Result<String, String> {
+    xml_to_json(xml_str).and_then(|json_str| json_converter::json_to_csv(&json_str))
+}
+
+pub fn xml_to_yaml(xml_str: &str) -> Result<String, String> {
+    xml_to_json(xml_str).and_then(|json_str| json_converter::json_to_yaml(&json_str))
 }

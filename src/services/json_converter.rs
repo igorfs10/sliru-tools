@@ -1,12 +1,12 @@
 use std::collections::BTreeSet;
 
 use csv::WriterBuilder;
+use quick_xml::Writer;
+use quick_xml::events::{BytesEnd, BytesStart, BytesText, Event};
 use serde::Serialize;
 use serde_json::Value;
-use yaml_rust2::{YamlEmitter, YamlLoader};
-use quick_xml::Writer;
-use quick_xml::events::{Event, BytesStart, BytesEnd, BytesText};
 use std::io::Cursor;
+use yaml_rust2::{YamlEmitter, YamlLoader};
 
 pub fn pretty_json(input: &str) -> Result<String, String> {
     let v: Value =
@@ -123,31 +123,45 @@ pub fn json_to_xml(json_str: &str) -> Result<String, String> {
     String::from_utf8(result).map_err(|e| format!("Erro ao converter XML para UTF-8: {}", e))
 }
 
-fn write_value_as_xml<W: std::io::Write>(writer: &mut Writer<W>, tag: &str, value: &Value) -> Result<(), String> {
+fn write_value_as_xml<W: std::io::Write>(
+    writer: &mut Writer<W>,
+    tag: &str,
+    value: &Value,
+) -> Result<(), String> {
     let elem = BytesStart::new(tag);
-    writer.write_event(Event::Start(elem)).map_err(|e| e.to_string())?;
+    writer
+        .write_event(Event::Start(elem))
+        .map_err(|e| e.to_string())?;
     match value {
-        Value::Null => {},
+        Value::Null => {}
         Value::Bool(b) => {
-            writer.write_event(Event::Text(BytesText::new(&b.to_string()))).map_err(|e| e.to_string())?;
-        },
+            writer
+                .write_event(Event::Text(BytesText::new(&b.to_string())))
+                .map_err(|e| e.to_string())?;
+        }
         Value::Number(n) => {
-            writer.write_event(Event::Text(BytesText::new(&n.to_string()))).map_err(|e| e.to_string())?;
-        },
+            writer
+                .write_event(Event::Text(BytesText::new(&n.to_string())))
+                .map_err(|e| e.to_string())?;
+        }
         Value::String(s) => {
-            writer.write_event(Event::Text(BytesText::new(s))).map_err(|e| e.to_string())?;
-        },
+            writer
+                .write_event(Event::Text(BytesText::new(s)))
+                .map_err(|e| e.to_string())?;
+        }
         Value::Array(arr) => {
             for v in arr {
                 write_value_as_xml(writer, "item", v)?;
             }
-        },
+        }
         Value::Object(map) => {
             for (k, v) in map {
                 write_value_as_xml(writer, k, v)?;
             }
         }
     }
-    writer.write_event(Event::End(BytesEnd::new(tag))).map_err(|e| e.to_string())?;
+    writer
+        .write_event(Event::End(BytesEnd::new(tag)))
+        .map_err(|e| e.to_string())?;
     Ok(())
 }

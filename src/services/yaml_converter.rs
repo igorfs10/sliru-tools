@@ -52,6 +52,10 @@ pub fn yaml_to_csv(yaml_str: &str) -> Result<String, String> {
     yaml_to_json(yaml_str).and_then(|json_str| json_converter::json_to_csv(&json_str))
 }
 
+pub fn yaml_to_xml(yaml_str: &str) -> Result<String, String> {
+    yaml_to_json(yaml_str).and_then(|json_str| json_converter::json_to_xml(&json_str))
+}
+
 pub fn pretty_yaml(yaml_str: &str) -> Result<String, String> {
     yaml_to_json(yaml_str).and_then(|json_str| json_converter::json_to_yaml(&json_str))
 }
