@@ -61,6 +61,7 @@ pub fn xml_to_json(xml_str: &str) -> Result<String, String> {
         buf.clear();
     }
     if let Some((_, root)) = stack.pop() {
+        let root = normalize_root_array(root);
         let mut buf = Vec::new();
         let formatter = serde_json::ser::PrettyFormatter::with_indent(b"    ");
         let mut ser = serde_json::Serializer::with_formatter(&mut buf, formatter);
@@ -91,4 +92,18 @@ fn parse_text_value(s: &str) -> Value {
         }
     }
     Value::String(s.to_string())
+}
+
+fn normalize_root_array(v: Value) -> Value {
+    match v {
+        Value::Object(mut m) => {
+            if m.len() == 1 {
+                if let Some(Value::Array(arr)) = m.remove("item") {
+                    return Value::Array(arr);
+                }
+            }
+            Value::Object(m)
+        }
+        other => other,
+    }
 }
