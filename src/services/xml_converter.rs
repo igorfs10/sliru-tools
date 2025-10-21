@@ -20,22 +20,22 @@ pub fn xml_to_json(xml_str: &str) -> Result<String, String> {
                     .decoder()
                     .decode(e.as_ref())
                     .map_err(|er| format!("Erro ao decodificar texto: {}", er))?;
-                current_text = cow.into_owned();
+                current_text = cow.trim().to_string();
             }
             Ok(Event::End(e)) => {
                 let tag = String::from_utf8_lossy(e.name().as_ref()).to_string();
                 let (elem_tag, mut elem_val) = stack.pop().unwrap_or_else(|| (tag.clone(), Value::Object(Map::new())));
                 if !current_text.is_empty() {
                     if let Value::Object(ref mut map) = elem_val {
-                        map.insert("_text".to_string(), Value::String(current_text.clone()));
+                        map.insert("_text".to_string(), parse_text_value(&current_text));
                     }
                     current_text.clear();
                 }
                 // Se o elemento contém apenas texto, colapsa para string pura
                 if let Value::Object(ref mut map) = elem_val {
                     if map.len() == 1 {
-                        if let Some(Value::String(s)) = map.remove("_text") {
-                            elem_val = Value::String(s);
+                        if let Some(v) = map.remove("_text") {
+                            elem_val = v;
                         }
                     }
                 }
@@ -64,4 +64,25 @@ pub fn xml_to_json(xml_str: &str) -> Result<String, String> {
     } else {
         Err("XML vazio ou inválido".to_string())
     }
+}
+
+fn parse_text_value(s: &str) -> Value {
+    if s.eq_ignore_ascii_case("null") {
+        return Value::Null;
+    }
+    if s.eq_ignore_ascii_case("true") {
+        return Value::Bool(true);
+    }
+    if s.eq_ignore_ascii_case("false") {
+        return Value::Bool(false);
+    }
+    if let Ok(i) = s.parse::<i64>() {
+        return serde_json::Number::from(i).into();
+    }
+    if let Ok(f) = s.parse::<f64>() {
+        if let Some(n) = serde_json::Number::from_f64(f) {
+            return Value::Number(n);
+        }
+    }
+    Value::String(s.to_string())
 }
