@@ -1,5 +1,6 @@
 use quick_xml::events::Event;
 use quick_xml::Reader;
+use serde::Serialize;
 use serde_json::{Map, Value};
 
 pub fn xml_to_json(xml_str: &str) -> Result<String, String> {
@@ -60,7 +61,12 @@ pub fn xml_to_json(xml_str: &str) -> Result<String, String> {
         buf.clear();
     }
     if let Some((_, root)) = stack.pop() {
-        serde_json::to_string_pretty(&root).map_err(|e| format!("Erro ao serializar JSON: {}", e))
+        let mut buf = Vec::new();
+        let formatter = serde_json::ser::PrettyFormatter::with_indent(b"    ");
+        let mut ser = serde_json::Serializer::with_formatter(&mut buf, formatter);
+        root.serialize(&mut ser)
+            .map_err(|e| format!("Erro ao serializar JSON: {}", e))?;
+        String::from_utf8(buf).map_err(|e| format!("Erro ao converter JSON para UTF-8: {}", e))
     } else {
         Err("XML vazio ou inválido".to_string())
     }
