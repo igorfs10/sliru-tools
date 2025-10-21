@@ -14,7 +14,7 @@ export component FormatConverterContainer inherits Rectangle {
             VerticalBox {
                 width: 45%;
                 ComboBox {
-                    model: ["JSON", "CSV", "YAML"];
+                    model: ["JSON", "CSV", "YAML", "XML"];
                     current-index <=> root.inputFormat;
                 }
             }
@@ -28,7 +28,7 @@ export component FormatConverterContainer inherits Rectangle {
             VerticalBox {
                 width: 45%;
                 ComboBox {
-                    model: ["JSON", "CSV", "YAML"];
+                    model: ["JSON", "CSV", "YAML", "XML"];
                     current-index <=> root.outputFormat;
                 }
             }

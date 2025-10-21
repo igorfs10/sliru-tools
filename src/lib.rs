@@ -2,6 +2,7 @@ use crate::enums::format_converter::FormatConverter;
 use crate::services::csv_converter::*;
 use crate::services::json_converter::*;
 use crate::services::yaml_converter::*;
+use crate::services::xml_converter::*;
 
 pub mod enums;
 pub mod services;
@@ -136,6 +137,28 @@ pub fn start_desktop() -> Result<(), slint::PlatformError> {
                             ui.set_formatConverterOutputText(e.into());
                         }
                     }
+                }
+                (FormatConverter::Xml, FormatConverter::Json) => {
+                    match xml_to_json(&input_text) {
+                        Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                        Err(e) => ui.set_formatConverterOutputText(e.into()),
+                    }
+                }
+                (FormatConverter::Json, FormatConverter::Xml) => {
+                    match json_to_xml(&input_text) {
+                        Ok(v) => ui.set_formatConverterOutputText(v.into()),
+                        Err(e) => ui.set_formatConverterOutputText(e.into()),
+                    }
+                }
+                (FormatConverter::Xml, FormatConverter::Xml) => {
+                    // pretty XML (por enquanto apenas retorna o mesmo texto)
+                    ui.set_formatConverterOutputText(input_text.clone());
+                }
+                (FormatConverter::Csv, FormatConverter::Xml)
+                | (FormatConverter::Xml, FormatConverter::Csv)
+                | (FormatConverter::Yaml, FormatConverter::Xml)
+                | (FormatConverter::Xml, FormatConverter::Yaml) => {
+                    ui.set_formatConverterOutputText("Conversão XML/CSV/YAML não implementada".into());
                 }
             }
         }
