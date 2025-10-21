@@ -2,6 +2,8 @@ use csv::ReaderBuilder;
 use serde::Serialize;
 use serde_json::{Map, Value};
 
+use crate::services::json_converter;
+
 pub fn csv_to_json(csv_str: &str) -> Result<String, String> {
     let mut rdr = ReaderBuilder::new()
         .flexible(true)
@@ -28,4 +30,12 @@ pub fn csv_to_json(csv_str: &str) -> Result<String, String> {
     out.serialize(&mut ser)
         .map_err(|e| format!("Erro ao serializar JSON: {}", e))?;
     String::from_utf8(buf).map_err(|e| format!("Erro ao converter JSON para UTF-8: {}", e))
+}
+
+pub fn csv_to_yaml(csv_str: &str) -> Result<String, String> {
+    csv_to_json(csv_str).and_then(|json_str| json_converter::json_to_yaml(&json_str))
+}
+
+pub fn pretty_csv(csv_str: &str) -> Result<String, String> {
+    csv_to_json(csv_str).and_then(|json_str| json_converter::json_to_csv(&json_str))
 }

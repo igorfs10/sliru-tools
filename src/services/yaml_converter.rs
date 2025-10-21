@@ -2,6 +2,8 @@ use serde::Serialize;
 use serde_json::Value;
 use yaml_rust2::YamlLoader;
 
+use crate::services::json_converter;
+
 pub fn yaml_to_json(yaml_str: &str) -> Result<String, String> {
     let docs = YamlLoader::load_from_str(yaml_str)
         .map_err(|e| format!("Erro ao fazer parse do YAML: {}", e))?;
@@ -14,7 +16,8 @@ pub fn yaml_to_json(yaml_str: &str) -> Result<String, String> {
     let mut buf = Vec::new();
     let formatter = serde_json::ser::PrettyFormatter::with_indent(b"    ");
     let mut ser = serde_json::Serializer::with_formatter(&mut buf, formatter);
-    value.serialize(&mut ser)
+    value
+        .serialize(&mut ser)
         .map_err(|e| format!("Erro ao serializar JSON: {}", e))?;
     String::from_utf8(buf).map_err(|e| format!("Erro ao converter JSON para UTF-8: {}", e))
 }
@@ -43,4 +46,12 @@ fn yaml_to_json_value(yaml: &yaml_rust2::Yaml) -> Value {
         }
         _ => Value::Null,
     }
+}
+
+pub fn yaml_to_csv(yaml_str: &str) -> Result<String, String> {
+    yaml_to_json(yaml_str).and_then(|json_str| json_converter::json_to_csv(&json_str))
+}
+
+pub fn pretty_yaml(yaml_str: &str) -> Result<String, String> {
+    yaml_to_json(yaml_str).and_then(|json_str| json_converter::json_to_yaml(&json_str))
 }

@@ -34,8 +34,7 @@ pub fn start_desktop() -> Result<(), slint::PlatformError> {
         move || {
             let ui = ui_handle.unwrap();
             let input_format = FormatConverter::from(ui.get_formatConverterInputFormat());
-            let output_format =
-                FormatConverter::from(ui.get_formatConverterOutputFormat());
+            let output_format = FormatConverter::from(ui.get_formatConverterOutputFormat());
             let input_text = ui.get_formatConverterInputText();
 
             match (input_format, output_format) {
@@ -61,6 +60,17 @@ pub fn start_desktop() -> Result<(), slint::PlatformError> {
                         }
                     }
                 }
+                (FormatConverter::Json, FormatConverter::Yaml) => {
+                    // JSON para YAML
+                    match json_to_yaml(&input_text) {
+                        Ok(v) => {
+                            ui.set_formatConverterOutputText(v.into());
+                        }
+                        Err(e) => {
+                            ui.set_formatConverterOutputText(e.into());
+                        }
+                    }
+                }
                 (FormatConverter::Csv, FormatConverter::Json) => {
                     // CSV para JSON
                     match csv_to_json(&input_text) {
@@ -72,9 +82,20 @@ pub fn start_desktop() -> Result<(), slint::PlatformError> {
                         }
                     }
                 }
-                (FormatConverter::Json, FormatConverter::Yaml) => {
-                    // JSON para YAML
-                    match json_to_yaml(&input_text) {
+                (FormatConverter::Csv, FormatConverter::Csv) => {
+                    // pretty CSV
+                    match pretty_csv(&input_text) {
+                        Ok(v) => {
+                            ui.set_formatConverterOutputText(v.into());
+                        }
+                        Err(e) => {
+                            ui.set_formatConverterOutputText(e.into());
+                        }
+                    }
+                }
+                (FormatConverter::Csv, FormatConverter::Yaml) => {
+                    // CSV para YAML
+                    match csv_to_yaml(&input_text) {
                         Ok(v) => {
                             ui.set_formatConverterOutputText(v.into());
                         }
@@ -94,8 +115,27 @@ pub fn start_desktop() -> Result<(), slint::PlatformError> {
                         }
                     }
                 }
-                _ => {
-                    ui.set_formatConverterOutputText("Formato de entrada/saída inválido".into());
+                (FormatConverter::Yaml, FormatConverter::Csv) => {
+                    // YAML para CSV
+                    match yaml_to_csv(&input_text) {
+                        Ok(v) => {
+                            ui.set_formatConverterOutputText(v.into());
+                        }
+                        Err(e) => {
+                            ui.set_formatConverterOutputText(e.into());
+                        }
+                    }
+                }
+                (FormatConverter::Yaml, FormatConverter::Yaml) => {
+                    // pretty YAML
+                    match pretty_yaml(&input_text) {
+                        Ok(v) => {
+                            ui.set_formatConverterOutputText(v.into());
+                        }
+                        Err(e) => {
+                            ui.set_formatConverterOutputText(e.into());
+                        }
+                    }
                 }
             }
         }

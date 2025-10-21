@@ -10,7 +10,7 @@ impl From<i32> for FormatConverter {
             0 => FormatConverter::Json,
             1 => FormatConverter::Csv,
             2 => FormatConverter::Yaml,
-            _ => FormatConverter::Json, 
+            _ => FormatConverter::Json,
         }
     }
 }
