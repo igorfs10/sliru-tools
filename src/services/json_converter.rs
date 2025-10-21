@@ -18,7 +18,6 @@ pub fn pretty_json(input: &str) -> Result<String, String> {
 }
 
 pub fn json_to_csv(json_str: &str) -> Result<String, String> {
-    // Tenta fazer parse do JSON
     let v: Value = serde_json::from_str(json_str)
         .map_err(|e| format!("Erro ao fazer parse do JSON: {}", e))?;
 
@@ -52,6 +51,17 @@ pub fn json_to_csv(json_str: &str) -> Result<String, String> {
                         .map_err(|e| format!("Erro ao escrever linha CSV: {}", e))?;
                 }
             }
+        }
+        Value::Object(map) => {
+            let headers_vec: Vec<String> = map.keys().cloned().collect();
+            wtr.write_record(&headers_vec)
+                .map_err(|e| format!("Erro ao escrever cabeçalho CSV: {}", e))?;
+            let row: Vec<String> = headers_vec
+                .iter()
+                .map(|h| map.get(h).map(|val| value_to_cell(val)).unwrap_or_default())
+                .collect();
+            wtr.write_record(&row)
+                .map_err(|e| format!("Erro ao escrever linha CSV: {}", e))?;
         }
         _ => {
             wtr.write_record(&["value"])
