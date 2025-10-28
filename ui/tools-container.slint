@@ -30,6 +30,7 @@ export component ToolsContainer inherits Rectangle {
                 width: parent.width;
                 spacing: 0px;
                 for row[i] in rows: Rectangle {
+                    height: 50px;
                     border-radius: 15px;
                     background: ((Math.mod(i, 2) == 0) ? #10141c : #0b0f17);
                     HorizontalBox {
