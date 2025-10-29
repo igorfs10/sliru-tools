@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="icon.svg" type="image/svg+xml" />
+        <title>SliRu Tools</title>
+        <style>
+            html,
+            body {
+                margin: 0;
+                height: 100%;
+                background: #0b0f17;
+                overflow: hidden;
+            }
+            /* o Slint renderiza neste canvas */
+            #canvas {
+                display: block;
+                width: 100% !important;
+                height: 100% !important;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- canvas obrigatório para o Slint no WASM -->
+        <canvas id="canvas"></canvas>
+
+        <script type="module">
+            import init from "./pkg/sliru_tools_lib.js";
+            // só inicia depois que o módulo carregar
+            await init();
+        </script>
+    </body>
+</html>

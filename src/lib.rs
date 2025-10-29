@@ -19,8 +19,16 @@ slint::include_modules!();
 //     nova_janela.show().unwrap();
 // }
 
-#[cfg(not(target_arch = "wasm32"))]
-pub fn start_desktop() -> Result<(), slint::PlatformError> {
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen(start)]
+#[cfg(target_arch = "wasm32")]
+pub fn start_wasm() -> Result<(), slint::PlatformError> {
+    start()
+}
+
+pub fn start() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
 
     ui.on_open_file_verify({

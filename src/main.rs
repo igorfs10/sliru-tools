@@ -4,6 +4,6 @@
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    sliru_tools_lib::start_desktop()?;
+    sliru_tools_lib::start()?;
     Ok(())
 }
