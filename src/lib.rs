@@ -52,7 +52,7 @@ pub fn start_desktop() -> Result<(), slint::PlatformError> {
                             sha256_hasher.finalize().to_vec()
                         }
                     };
-                    let mut buf = [0u8; 16000];
+                    let mut buf = [0u8; 1024];
                     let base16_hash = base16ct::lower::encode_str(&hash, &mut buf).unwrap();
                     ui.set_fileVerifyOutputText(base16_hash.into());
                 }
