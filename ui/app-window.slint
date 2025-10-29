@@ -1,6 +1,7 @@
 import { Button, VerticalBox } from "std-widgets.slint";
 import { ToolsContainer } from "tools-container.slint";
 import { FormatConverterContainer } from "format-converter-container.slint";
+import { FileVerifyContainer } from "file-verify-container.slint";
 
 export component AppWindow inherits Window {
     min-height: 600px;
@@ -10,9 +11,12 @@ export component AppWindow inherits Window {
     in-out property <int> formatConverterOutputFormat;
     in-out property <string> formatConverterInputText;
     in-out property <string> formatConverterOutputText;
+    in-out property <int> fileVerifyOutputFormat;
+    in-out property <string> fileVerifyOutputText;
 
     callback format-converter-execute();
     callback format-converter-inverter();
+    callback open-file-verify();
 
     if(idContainer == 0):ToolsContainer {
         idContainer <=> root.idContainer;
@@ -25,5 +29,11 @@ export component AppWindow inherits Window {
         outputText <=> root.formatConverterOutputText;
         format-converter-execute => root.format-converter-execute();
         format-converter-inverter => root.format-converter-inverter();
+    }
+    if(idContainer == 2):FileVerifyContainer {
+        idContainer <=> root.idContainer;
+        outputText <=> root.fileVerifyOutputText;
+        outputFormat <=> root.fileVerifyOutputFormat;
+        open-file-verify => root.open-file-verify();
     }
 }

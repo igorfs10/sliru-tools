@@ -1,0 +1,58 @@
+import { ComboBox, TextEdit, VerticalBox, Button } from "std-widgets.slint";
+
+export component FileVerifyContainer inherits Rectangle {
+    in-out property <int> idContainer;
+    in-out property <int> outputFormat;
+    in-out property <string> outputText;
+
+    callback open-file-verify();
+
+    VerticalBox {
+        HorizontalLayout {
+            height: 50px;
+            VerticalBox {
+                Button {
+                    width: 100%;
+                    height: 50px;
+                    text: "←";
+                    clicked => {
+                        root.idContainer = 0;
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            height: 50px;
+            VerticalBox {
+                width: 50%;
+                ComboBox {
+                    height: 50px;
+                    model: ["MD5", "SHA1", "SHA256"];
+                    current-index <=> root.outputFormat;
+                }
+            }
+
+            VerticalBox {
+                Button {
+                    width: 50%;
+                    height: 50px;
+                    text: "Open File";
+                    clicked => {
+                        root.open-file-verify();
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            VerticalBox {
+                width: 100%;
+                TextEdit {
+                    text <=> root.outputText;
+                    read-only: true;
+                }
+            }
+        }
+    }
+}

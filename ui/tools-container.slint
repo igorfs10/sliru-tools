@@ -3,14 +3,14 @@ import { ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
 // Estrutura de dados para cada item da lista
 export struct ItemRow {
     id: int,
-    name: string
-}
+    name: string}
 
 export component ToolsContainer inherits Rectangle {
     in-out property <int> idContainer;
     in property <[ItemRow]> rows: [
         // Exemplo de dados iniciais
         { id: 1, name: "Text Format Converter" },
+        { id: 2, name: "File Verify" },
     ];
 
     background: transparent;
@@ -21,7 +21,7 @@ export component ToolsContainer inherits Rectangle {
         height: parent.height;
 
         // lista visual
-        ScrollView  {
+        ScrollView {
             width: parent.width;
             height: parent.height;
             mouse-drag-pan-enabled: true;
@@ -38,10 +38,11 @@ export component ToolsContainer inherits Rectangle {
                             colorize: #ffffff;
                             width: 10%;
                         }
+
                         Text {
                             vertical-alignment: center;
                             text: row.name;
-                            font-size:  25px;
+                            font-size: 25px;
                         }
                     }
 

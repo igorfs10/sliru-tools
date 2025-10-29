@@ -3,6 +3,10 @@ use crate::services::csv_converter::*;
 use crate::services::json_converter::*;
 use crate::services::xml_converter::*;
 use crate::services::yaml_converter::*;
+use md5::{Digest, Md5};
+use rfd::AsyncFileDialog;
+use sha1::Sha1;
+use sha2::Sha256;
 
 pub mod enums;
 pub mod services;
@@ -18,6 +22,43 @@ slint::include_modules!();
 #[cfg(not(target_arch = "wasm32"))]
 pub fn start_desktop() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
+
+    ui.on_open_file_verify({
+        let ui_handle = ui.as_weak();
+        move || {
+            let ui = ui_handle.unwrap();
+            let _ = slint::spawn_local(async move {
+                if let Some(handle) = AsyncFileDialog::new()
+                    .add_filter("*", &["*"])
+                    .pick_file()
+                    .await
+                {
+                    let data = handle.read().await;
+
+                    let hash = match ui.get_fileVerifyOutputFormat() {
+                        0 => {
+                            let mut hasher = Md5::new();
+                            hasher.update(data);
+                            hasher.finalize().to_vec()
+                        }
+                        1 => {
+                            let mut sha1_hasher = Sha1::new();
+                            sha1_hasher.update(data);
+                            sha1_hasher.finalize().to_vec()
+                        }
+                        _ => {
+                            let mut sha256_hasher = Sha256::new();
+                            sha256_hasher.update(data);
+                            sha256_hasher.finalize().to_vec()
+                        }
+                    };
+                    let mut buf = [0u8; 16000];
+                    let base16_hash = base16ct::lower::encode_str(&hash, &mut buf).unwrap();
+                    ui.set_fileVerifyOutputText(base16_hash.into());
+                }
+            });
+        }
+    });
 
     ui.on_format_converter_inverter({
         let ui_handle = ui.as_weak();
