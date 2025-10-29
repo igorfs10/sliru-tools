@@ -10,7 +10,6 @@ export component ToolsContainer inherits Rectangle {
     in-out property <int> idContainer;
     in property <[ItemRow]> rows: [
         // Exemplo de dados iniciais
-        { id: 0, name: "Teste" },
         { id: 1, name: "Text Format Converter" },
     ];
 
@@ -42,7 +41,7 @@ export component ToolsContainer inherits Rectangle {
                         Text {
                             vertical-alignment: center;
                             text: row.name;
-                            font-size:  30px;
+                            font-size:  25px;
                         }
                     }
 

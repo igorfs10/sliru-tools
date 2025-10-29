@@ -1,4 +1,5 @@
 import { ComboBox, TextEdit, VerticalBox, Button } from "std-widgets.slint";
+
 export component FormatConverterContainer inherits Rectangle {
     in-out property <int> idContainer;
     in-out property <int> inputFormat;
@@ -11,28 +12,49 @@ export component FormatConverterContainer inherits Rectangle {
 
     VerticalBox {
         HorizontalLayout {
+            height: 50px;
+            VerticalBox {
+                Button {
+                    width: 100%;
+                    height: 50px;
+                    text: "←";
+                    clicked => {
+                        root.idContainer = 0;
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            height: 50px;
             VerticalBox {
                 width: 45%;
                 ComboBox {
+                    height: 50px;
                     model: ["JSON", "CSV", "YAML", "XML"];
                     current-index <=> root.inputFormat;
                 }
             }
+
             VerticalBox {
                 width: 10%;
                 Button {
+                    height: 50px;
                     text: "↔";
                     clicked => root.format-converter-inverter();
                 }
             }
+
             VerticalBox {
                 width: 45%;
                 ComboBox {
+                    height: 50px;
                     model: ["JSON", "CSV", "YAML", "XML"];
                     current-index <=> root.outputFormat;
                 }
             }
         }
+
         HorizontalLayout {
             VerticalBox {
                 width: 45%;
@@ -40,6 +62,7 @@ export component FormatConverterContainer inherits Rectangle {
                     text <=> root.inputText;
                 }
             }
+
             VerticalBox {
                 width: 10%;
                 alignment: center;
@@ -48,6 +71,7 @@ export component FormatConverterContainer inherits Rectangle {
                     clicked => root.format-converter-execute();
                 }
             }
+
             VerticalBox {
                 width: 45%;
                 TextEdit {

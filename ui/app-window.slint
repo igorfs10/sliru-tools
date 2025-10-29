@@ -3,6 +3,8 @@ import { ToolsContainer } from "tools-container.slint";
 import { FormatConverterContainer } from "format-converter-container.slint";
 
 export component AppWindow inherits Window {
+    min-height: 600px;
+    min-width: 600px;
     in-out property <int> idContainer: 0;
     in-out property <int> formatConverterInputFormat;
     in-out property <int> formatConverterOutputFormat;
@@ -12,7 +14,7 @@ export component AppWindow inherits Window {
     callback format-converter-execute();
     callback format-converter-inverter();
 
-    if(idContainer == 0):ToolsContainer{
+    if(idContainer == 0):ToolsContainer {
         idContainer <=> root.idContainer;
     }
     if(idContainer == 1):FormatConverterContainer {
