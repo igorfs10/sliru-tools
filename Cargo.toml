@@ -22,8 +22,6 @@ md-5 = "0.10"
 sha1 = "0.10"
 sha2 = "0.10"
 rfd = "0.15"
-base16ct = "0.3"
-
 
 [build-dependencies]
 slint-build = "1"

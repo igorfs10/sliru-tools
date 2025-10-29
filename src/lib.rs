@@ -52,9 +52,12 @@ pub fn start_desktop() -> Result<(), slint::PlatformError> {
                             sha256_hasher.finalize().to_vec()
                         }
                     };
-                    let mut buf = [0u8; 1024];
-                    let base16_hash = base16ct::lower::encode_str(&hash, &mut buf).unwrap();
-                    ui.set_fileVerifyOutputText(base16_hash.into());
+                    let hex: String = hash
+                        .iter()
+                        .map(|b| format!("{:02x}", b).to_string())
+                        .collect::<Vec<String>>()
+                        .join("");
+                    ui.set_fileVerifyOutputText(hex.into());
                 }
             });
         }
