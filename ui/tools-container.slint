@@ -3,14 +3,19 @@ import { ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
 // Estrutura de dados para cada item da lista
 export struct ItemRow {
     id: int,
-    name: string}
+    name: string,
+    icon: image}
 
 export component ToolsContainer inherits Rectangle {
     in-out property <int> idContainer;
     in property <[ItemRow]> rows: [
         // Exemplo de dados iniciais
-        { id: 1, name: "Text Format Converter" },
-        { id: 2, name: "File Verify" },
+        {
+            id: 1,
+            name: "Text Format Converter",
+            icon: @image-url("images/icons/text_format_icon.svg")
+        },
+        { id: 2, name: "File Verify", icon: @image-url("images/icons/file_verify_icon.svg") },
     ];
 
     background: transparent;
@@ -34,7 +39,7 @@ export component ToolsContainer inherits Rectangle {
                     background: ((Math.mod(i, 2) == 0) ? #10141c : #0b0f17);
                     HorizontalBox {
                         Image {
-                            source: @image-url("home_icon.svg");
+                            source: row.icon;
                             colorize: #ffffff;
                             width: 10%;
                         }
