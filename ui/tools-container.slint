@@ -1,22 +1,14 @@
-import { ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
-
-// Estrutura de dados para cada item da lista
-export struct ItemRow {
-    id: int,
-    name: string,
-    icon: image}
+import {
+    ScrollView,
+    VerticalBox,
+    HorizontalBox,
+    ComboBox,
+} from "std-widgets.slint";
 
 export component ToolsContainer inherits Rectangle {
     in-out property <int> idContainer;
-    in property <[ItemRow]> rows: [
-        // Exemplo de dados iniciais
-        {
-            id: 1,
-            name: "Text Format Converter",
-            icon: @image-url("images/icons/text_format_icon.svg")
-        },
-        { id: 2, name: "File Verify", icon: @image-url("images/icons/file_verify_icon.svg") },
-    ];
+
+    callback change-language(lang: string);
 
     background: transparent;
     border-radius: 6px;
@@ -31,29 +23,102 @@ export component ToolsContainer inherits Rectangle {
             height: parent.height;
             mouse-drag-pan-enabled: true;
             VerticalBox {
-                width: parent.width;
-                spacing: 0px;
-                for row[i] in rows: Rectangle {
+                width: 90%;
+                spacing: 10px;
+                Text {
+                    height: 20px;
+                    text: @tr("Select Language:");
+                    font-size: 16px;
+                }
+
+                ComboBox {
+                    width: parent.width;
                     height: 50px;
-                    border-radius: 15px;
-                    background: ((Math.mod(i, 2) == 0) ? #10141c : #0b0f17);
-                    HorizontalBox {
-                        Image {
-                            source: row.icon;
-                            colorize: #ffffff;
-                            width: 10%;
+                    model: ["---", "English", "Português Brasileiro"];
+                    selected(value) => {
+                        change-language(value);
+                    }
+                }
+
+                Rectangle {
+                    width: parent.width;
+                    height: 2px;
+                    background: #2c2f38;
+                }
+
+                Text {
+                    height: 20px;
+                    text: @tr("Tools");
+                    font-size: 16px;
+                    horizontal-alignment: center;
+                }
+
+                HorizontalBox {
+                    Rectangle {
+                        border-radius: 15px;
+                        width: 200px;
+                        height: 200px;
+                        background: #10141c;
+                        HorizontalBox {
+                            VerticalBox {
+                                HorizontalBox {
+                                    alignment: center;
+                                    Image {
+                                        source: @image-url("images/icons/text_format_icon.svg");
+                                        colorize: #ffffff;
+                                        width: 100px;
+                                        height: 100px;
+                                    }
+                                }
+
+                                Text {
+                                    width: 90%;
+                                    horizontal-alignment: center;
+                                    text: @tr("Text Format Converter");
+                                    font-size: 18px;
+                                    wrap: TextWrap.word-wrap;
+                                }
+                            }
                         }
 
-                        Text {
-                            vertical-alignment: center;
-                            text: row.name;
-                            font-size: 25px;
+                        TouchArea {
+                            clicked => {
+                                root.idContainer = 1;
+                            }
                         }
                     }
 
-                    TouchArea {
-                        clicked => {
-                            root.idContainer = row.id;
+                    Rectangle {
+                        border-radius: 15px;
+                        width: 200px;
+                        height: 200px;
+                        background: #10141c;
+                        HorizontalBox {
+                            VerticalBox {
+                                HorizontalBox {
+                                    alignment: center;
+                                    Image {
+                                        source: @image-url("images/icons/file_verify_icon.svg");
+                                        colorize: #ffffff;
+                                        width: 100px;
+                                        height: 100px;
+                                    }
+                                }
+
+                                Text {
+                                    width: 90%;
+                                    horizontal-alignment: center;
+                                    text: @tr("File Verify");
+                                    font-size: 18px;
+                                    wrap: TextWrap.word-wrap;
+                                }
+                            }
+                        }
+
+                        TouchArea {
+                            clicked => {
+                                root.idContainer = 2;
+                            }
                         }
                     }
                 }

@@ -22,6 +22,15 @@ slint::include_modules!();
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
+#[cfg(target_arch = "wasm32")]
+pub fn set_language(language: &str) {
+    match language {
+        "pt_BR" => slint::select_bundled_translation("pt_BR").unwrap(),
+        _ => slint::select_bundled_translation("en").unwrap(), // fallback to English
+    }
+}
+
 #[wasm_bindgen(start)]
 #[cfg(target_arch = "wasm32")]
 pub fn start_wasm() -> Result<(), slint::PlatformError> {
@@ -30,6 +39,18 @@ pub fn start_wasm() -> Result<(), slint::PlatformError> {
 
 pub fn start() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
+
+    ui.on_change_language({
+        move |language| match language.as_str() {
+            "English" => {
+                slint::select_bundled_translation("en").unwrap();
+            }
+            "Português Brasileiro" => {
+                slint::select_bundled_translation("pt_BR").unwrap();
+            }
+            _ => {}
+        }
+    });
 
     ui.on_open_file_verify({
         let ui_handle = ui.as_weak();

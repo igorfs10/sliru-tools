@@ -4,6 +4,7 @@ import { FormatConverterContainer } from "format-converter-container.slint";
 import { FileVerifyContainer } from "file-verify-container.slint";
 
 export component AppWindow inherits Window {
+    title: "SliRu Tools";
     min-height: 600px;
     min-width: 600px;
     in-out property <int> idContainer: 0;
@@ -14,12 +15,14 @@ export component AppWindow inherits Window {
     in-out property <int> fileVerifyOutputFormat;
     in-out property <string> fileVerifyOutputText;
 
+    callback change-language(lang: string);
     callback format-converter-execute();
     callback format-converter-inverter();
     callback open-file-verify();
 
     if(idContainer == 0):ToolsContainer {
         idContainer <=> root.idContainer;
+        change-language(value) => root.change-language(value);
     }
     if(idContainer == 1):FormatConverterContainer {
         idContainer <=> root.idContainer;
