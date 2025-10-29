@@ -31,8 +31,6 @@
             await init();
             // expõe para o global o método de troca de idioma para trocar o idioma baseado no navegador
             window.set_language = set_language;
-            console.log("oi");
-            console.log(set_language);
             var language = navigator.language || navigator.userLanguage;
             set_language(language.replace("-", "_"));
         </script>

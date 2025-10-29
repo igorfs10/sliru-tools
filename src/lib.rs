@@ -33,8 +33,8 @@ pub fn set_language(language: &str) {
 
 #[wasm_bindgen(start)]
 #[cfg(target_arch = "wasm32")]
-pub fn start_wasm() -> Result<(), slint::PlatformError> {
-    start()
+pub async fn start_wasm() -> Result<(), JsValue> {
+    Ok(start()?)
 }
 
 pub fn start() -> Result<(), slint::PlatformError> {
