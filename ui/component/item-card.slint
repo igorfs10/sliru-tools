@@ -1,0 +1,41 @@
+import { HorizontalBox, VerticalBox } from "std-widgets.slint";
+
+export component ItemCard inherits Rectangle {
+    in-out property <int> idContainer;
+    in property <int> cardId;
+    in property <string> name;
+    in property <image> icon;
+
+    border-radius: 15px;
+    width: 200px;
+    height: 200px;
+    background: #10141c;
+
+    HorizontalBox {
+        VerticalBox {
+            HorizontalBox {
+                alignment: center;
+                Image {
+                    source: icon;
+                    colorize: #ffffff;
+                    width: 100px;
+                    height: 100px;
+                }
+            }
+
+            Text {
+                width: 90%;
+                horizontal-alignment: center;
+                text: name;
+                font-size: 18px;
+                wrap: TextWrap.word-wrap;
+            }
+        }
+    }
+
+    TouchArea {
+        clicked => {
+            root.idContainer = cardId;
+        }
+    }
+}

@@ -4,6 +4,7 @@ import {
     HorizontalBox,
     ComboBox,
 } from "std-widgets.slint";
+import { ItemCard } from "component/item-card.slint";
 
 export component ToolsContainer inherits Rectangle {
     in-out property <int> idContainer;
@@ -54,72 +55,18 @@ export component ToolsContainer inherits Rectangle {
                 }
 
                 HorizontalBox {
-                    Rectangle {
-                        border-radius: 15px;
-                        width: 200px;
-                        height: 200px;
-                        background: #10141c;
-                        HorizontalBox {
-                            VerticalBox {
-                                HorizontalBox {
-                                    alignment: center;
-                                    Image {
-                                        source: @image-url("images/icons/text_format_icon.svg");
-                                        colorize: #ffffff;
-                                        width: 100px;
-                                        height: 100px;
-                                    }
-                                }
-
-                                Text {
-                                    width: 90%;
-                                    horizontal-alignment: center;
-                                    text: @tr("Text Format Converter");
-                                    font-size: 18px;
-                                    wrap: TextWrap.word-wrap;
-                                }
-                            }
-                        }
-
-                        TouchArea {
-                            clicked => {
-                                root.idContainer = 1;
-                            }
-                        }
+                    ItemCard {
+                        idContainer <=> root.idContainer;
+                        cardId: 1;
+                        icon: @image-url("images/icons/text_format_icon.svg");
+                        name: @tr("Text Format Converter");
                     }
 
-                    Rectangle {
-                        border-radius: 15px;
-                        width: 200px;
-                        height: 200px;
-                        background: #10141c;
-                        HorizontalBox {
-                            VerticalBox {
-                                HorizontalBox {
-                                    alignment: center;
-                                    Image {
-                                        source: @image-url("images/icons/file_verify_icon.svg");
-                                        colorize: #ffffff;
-                                        width: 100px;
-                                        height: 100px;
-                                    }
-                                }
-
-                                Text {
-                                    width: 90%;
-                                    horizontal-alignment: center;
-                                    text: @tr("File Verify");
-                                    font-size: 18px;
-                                    wrap: TextWrap.word-wrap;
-                                }
-                            }
-                        }
-
-                        TouchArea {
-                            clicked => {
-                                root.idContainer = 2;
-                            }
-                        }
+                    ItemCard {
+                        idContainer <=> root.idContainer;
+                        cardId: 2;
+                        icon: @image-url("images/icons/file_verify_icon.svg");
+                        name: @tr("File Verify");
                     }
                 }
             }
