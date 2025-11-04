@@ -77,9 +77,11 @@ pub async fn send_request(req: &RequestData) -> Result<RequestResult, String> {
     // configura cliente HTTP
     let client_builder = Client::builder();
 
-    let client = client_builder.build().map_err(|e| e.to_string())?;
+    let client = client_builder
+        .build()
+        .map_err(|e| format!("client build error: {:?}", e))?;
 
-    // define método e URL
+    // define método e URL (normalizado em maiúsculas)
     let method = req.method.as_deref().unwrap_or("GET").to_uppercase();
     let url = req.url.as_deref().ok_or("Missing URL")?;
 
@@ -96,9 +98,12 @@ pub async fn send_request(req: &RequestData) -> Result<RequestResult, String> {
         request = request.header(k, v);
     }
 
-    // corpo (se houver)
+    // corpo (se houver). Em ambientes WASM (fetch), GET/HEAD não podem ter body.
     if let Some(body) = &req.body {
-        request = request.body(body.clone());
+        let allow_body = matches!(method.as_str(), "POST" | "PUT" | "PATCH" | "DELETE");
+        if allow_body {
+            request = request.body(body.clone());
+        }
     }
 
     // envia e processa resposta

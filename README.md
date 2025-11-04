@@ -76,4 +76,3 @@ BODY
 
 ```
 > METHOD, URL are required
-> TIMEOUT is in seconds
