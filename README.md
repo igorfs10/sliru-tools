@@ -1,6 +1,7 @@
 # SlinRu Tools — Rust (desktop + WASM)
 
 Pequena aplicação rust com interface gráfica slint com ferramentas simples para verificação de integridade de arquivos e de formatos de texto json,xml, yaml e csv.
+Versão web: https://igorfs10.github.io/sliru-tools/web/
 
 ## Pré-requisitos
 - Rust estável (via `rustup`)
