@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-10-29 18:40+0000\n"
-"PO-Revision-Date: 2025-10-29 15:41-0300\n"
+"POT-Creation-Date: 2025-11-04 00:23+0000\n"
+"PO-Revision-Date: 2025-11-03 21:25-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -17,22 +17,37 @@ msgctxt "FileVerifyContainer"
 msgid "Open File"
 msgstr "Abrir Arquivo"
 
-#: tools-container.slint:30
+#: hdoc-request-container.slint:29
+msgctxt "HDocRequestContainer"
+msgid "Hdoc text:"
+msgstr "Texto Hdoc:"
+
+#: hdoc-request-container.slint:48
+msgctxt "HDocRequestContainer"
+msgid "Result:"
+msgstr "Resultado:"
+
+#: tools-container.slint:31
 msgctxt "ToolsContainer"
 msgid "Select Language:"
 msgstr "Selecione o Idioma:"
 
-#: tools-container.slint:51
+#: tools-container.slint:52
 msgctxt "ToolsContainer"
 msgid "Tools"
 msgstr "Ferramentas"
 
-#: tools-container.slint:77
+#: tools-container.slint:62
 msgctxt "ToolsContainer"
 msgid "Text Format Converter"
 msgstr "Conversor de formato de texto"
 
-#: tools-container.slint:111
+#: tools-container.slint:69
 msgctxt "ToolsContainer"
 msgid "File Verify"
 msgstr "Verificador de Arquivo"
+
+#: tools-container.slint:76
+msgctxt "ToolsContainer"
+msgid "Request test with hdoc"
+msgstr "Teste requisição com hdoc"

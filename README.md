@@ -48,3 +48,37 @@ find -name \*.slint | xargs slint-tr-extractor -o sliru-tools.pot
 # 3) Mova o arquivo .pot para a pasta correta
 mv sliru-tools.pot ../translations/
 ```
+
+## HDoc request format
+
+```
+<<METHOD
+POST
+METHOD
+<<URL
+https://httpbin.org/post
+URL
+<<HEADERS
+Authorization: Bearer 123
+Id: 01
+HEADERS
+<<COOKIES
+Session: abc123
+User: name
+COOKIES
+<<BODY
+{
+	"name": "name",
+	"phone": "1234532"
+}
+BODY
+<<TIMEOUT
+5
+TIMEOUT
+<<REDIRECTS
+true
+REDIRECTS
+
+```
+> METHOD, URL are required
+> TIMEOUT is in seconds

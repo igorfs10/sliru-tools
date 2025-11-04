@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2025-10-29 18:40+0000\n"
+"POT-Creation-Date: 2025-11-04 00:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,23 +17,38 @@ msgctxt "FileVerifyContainer"
 msgid "Open File"
 msgstr ""
 
-#: tools-container.slint:30
+#: hdoc-request-container.slint:29
+msgctxt "HDocRequestContainer"
+msgid "Hdoc text:"
+msgstr ""
+
+#: hdoc-request-container.slint:48
+msgctxt "HDocRequestContainer"
+msgid "Result:"
+msgstr ""
+
+#: tools-container.slint:31
 msgctxt "ToolsContainer"
 msgid "Select Language:"
 msgstr ""
 
-#: tools-container.slint:51
+#: tools-container.slint:52
 msgctxt "ToolsContainer"
 msgid "Tools"
 msgstr ""
 
-#: tools-container.slint:77
+#: tools-container.slint:62
 msgctxt "ToolsContainer"
 msgid "Text Format Converter"
 msgstr ""
 
-#: tools-container.slint:111
+#: tools-container.slint:69
 msgctxt "ToolsContainer"
 msgid "File Verify"
+msgstr ""
+
+#: tools-container.slint:76
+msgctxt "ToolsContainer"
+msgid "Request test with hdoc"
 msgstr ""
 

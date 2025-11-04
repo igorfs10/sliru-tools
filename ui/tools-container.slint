@@ -68,6 +68,13 @@ export component ToolsContainer inherits Rectangle {
                         icon: @image-url("images/icons/file_verify_icon.svg");
                         name: @tr("File Verify");
                     }
+
+                    ItemCard {
+                        idContainer <=> root.idContainer;
+                        cardId: 3;
+                        icon: @image-url("images/icons/hdoc_request_icon.svg");
+                        name: @tr("Request test with hdoc");
+                    }
                 }
             }
         }

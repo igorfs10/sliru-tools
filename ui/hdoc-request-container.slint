@@ -1,0 +1,57 @@
+import { ComboBox, TextEdit, VerticalBox, Button } from "std-widgets.slint";
+
+export component HDocRequestContainer inherits Rectangle {
+    in-out property <int> idContainer;
+    in-out property <string> inputText;
+    in-out property <string> outputText;
+
+    callback hdoc-request-execute();
+
+    VerticalBox {
+        HorizontalLayout {
+            height: 50px;
+            VerticalBox {
+                Button {
+                    width: 100%;
+                    height: 50px;
+                    text: "←";
+                    clicked => {
+                        root.idContainer = 0;
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            VerticalBox {
+                width: 45%;
+                Text {
+                    text: @tr("Hdoc text:");
+                }
+                TextEdit {
+                    text <=> root.inputText;
+                }
+            }
+
+            VerticalBox {
+                width: 10%;
+                alignment: center;
+                Button {
+                    text: "→";
+                    clicked => root.hdoc-request-execute();
+                }
+            }
+
+            VerticalBox {
+                width: 45%;
+                Text {
+                    text: @tr("Result:");
+                }
+                TextEdit {
+                    text <=> root.outputText;
+                    read-only: true;
+                }
+            }
+        }
+    }
+}

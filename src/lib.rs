@@ -10,6 +10,7 @@ use sha2::Sha256;
 
 pub mod enums;
 pub mod services;
+pub mod structs;
 
 slint::include_modules!();
 
@@ -49,6 +50,51 @@ pub fn start() -> Result<(), slint::PlatformError> {
                 slint::select_bundled_translation("pt_BR").unwrap();
             }
             _ => {}
+        }
+    });
+
+    ui.on_hdoc_request_execute({
+        let ui_handle = ui.as_weak();
+        move || {
+            let ui = ui_handle.unwrap();
+            let ui_clone = ui_handle.unwrap();
+            let input_text = ui.get_hdocRequestInputText();
+            match crate::services::hdoc_request::parse_heredoc_request(&input_text) {
+                Ok(request_data) => {
+                    let rt = tokio::runtime::Builder::new_current_thread()
+                        .enable_all()
+                        .build()
+                        .expect("Erro ao criar runtime tokio");
+
+                    rt.handle().spawn(async move{
+                        match crate::services::hdoc_request::send_request(&request_data).await {
+                            Ok(result) => {
+                                let mut output = format!("Status Code: {}\n", result.status_code);
+                                output.push_str("Headers:\n");
+                                for (k, v) in result.headers {
+                                    output.push_str(&format!("{}: {}\n", k, v));
+                                }
+                                output.push_str("\nBody:\n");
+                                output.push_str(&result.body);
+                                slint::invoke_from_event_loop(move || {
+                                    ui_clone.set_hdocRequestOutputText(output.into());
+                                });
+                            }
+                            Err(e) => {
+                                slint::invoke_from_event_loop(move || {
+                                    let ui = ui_handle.unwrap();
+                                    ui.set_hdocRequestOutputText(
+                                        format!("Error executing request: {}", e).into(),
+                                    );
+                                });
+                            }
+                        }
+                    });
+                }
+                Err(e) => {
+                    ui.set_hdocRequestOutputText(format!("Error parsing request: {}", e).into());
+                }
+            }
         }
     });
 

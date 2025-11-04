@@ -2,11 +2,12 @@ import { Button, VerticalBox } from "std-widgets.slint";
 import { ToolsContainer } from "tools-container.slint";
 import { FormatConverterContainer } from "format-converter-container.slint";
 import { FileVerifyContainer } from "file-verify-container.slint";
+import { HDocRequestContainer } from "hdoc-request-container.slint";
 
 export component AppWindow inherits Window {
     title: "SliRu Tools";
     min-height: 600px;
-    min-width: 600px;
+    min-width: 700px;
     in-out property <int> idContainer: 0;
     in-out property <int> formatConverterInputFormat;
     in-out property <int> formatConverterOutputFormat;
@@ -14,11 +15,14 @@ export component AppWindow inherits Window {
     in-out property <string> formatConverterOutputText;
     in-out property <int> fileVerifyOutputFormat;
     in-out property <string> fileVerifyOutputText;
+    in-out property <string> hdocRequestInputText;
+    in-out property <string> hdocRequestOutputText;
 
     callback change-language(lang: string);
     callback format-converter-execute();
     callback format-converter-inverter();
     callback open-file-verify();
+    callback hdoc-request-execute();
 
     if(idContainer == 0):ToolsContainer {
         idContainer <=> root.idContainer;
@@ -38,5 +42,11 @@ export component AppWindow inherits Window {
         outputText <=> root.fileVerifyOutputText;
         outputFormat <=> root.fileVerifyOutputFormat;
         open-file-verify => root.open-file-verify();
+    }
+    if(idContainer == 3):HDocRequestContainer {
+        idContainer <=> root.idContainer;
+        inputText <=> root.hdocRequestInputText;
+        outputText <=> root.hdocRequestOutputText;
+        hdoc-request-execute => root.hdoc-request-execute();
     }
 }
