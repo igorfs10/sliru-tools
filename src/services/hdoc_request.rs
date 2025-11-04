@@ -1,6 +1,6 @@
-use std::{collections::HashMap, time::Duration};
+use std::collections::HashMap;
 
-use reqwest::{Client, redirect::Policy};
+use reqwest::Client;
 
 use crate::structs::{request_data::RequestData, request_result::RequestResult};
 
@@ -10,8 +10,6 @@ pub fn parse_heredoc_request(input: &str) -> Result<RequestData, String> {
     let mut headers = HashMap::new();
     let mut cookies = HashMap::new();
     let mut body: Option<String> = None;
-    let mut timeout_secs: Option<u64> = None;
-    let mut follow_redirects: Option<bool> = None;
 
     let lines: Vec<&str> = input.lines().collect();
     let mut i = 0;
@@ -49,14 +47,6 @@ pub fn parse_heredoc_request(input: &str) -> Result<RequestData, String> {
                     }
                 }
                 "BODY" => body = Some(content),
-                "TIMEOUT" => match content.trim().parse::<u64>() {
-                    Ok(v) => timeout_secs = Some(v),
-                    Err(_) => return Err(format!("Valor inválido em TIMEOUT: '{}'", content)),
-                },
-                "FOLLOW_REDIRECTS" => {
-                    let val = content.trim().to_lowercase();
-                    follow_redirects = Some(matches!(val.as_str(), "true" | "1" | "yes"));
-                }
                 _ => {} // ignora blocos desconhecidos
             }
         }
@@ -89,30 +79,12 @@ pub fn parse_heredoc_request(input: &str) -> Result<RequestData, String> {
         headers,
         cookies,
         body,
-        timeout_secs,
-        follow_redirects,
     })
 }
 
 pub async fn send_request(req: &RequestData) -> Result<RequestResult, String> {
     // configura cliente HTTP
-    let mut client_builder = Client::builder();
-
-    // timeout opcional
-    if let Some(secs) = req.timeout_secs {
-        client_builder = client_builder.timeout(Duration::from_secs(secs));
-    } else {
-        client_builder = client_builder.timeout(Duration::from_secs(30));
-    }
-
-    // redirecionamentos
-    if let Some(follow) = req.follow_redirects {
-        client_builder = client_builder.redirect(if follow {
-            Policy::limited(10)
-        } else {
-            Policy::none()
-        });
-    }
+    let client_builder = Client::builder();
 
     let client = client_builder.build().map_err(|e| e.to_string())?;
 

@@ -26,6 +26,11 @@ cargo install wasm-pack
 rustup target add wasm32-unknown-unknown
 
 # 3) Gere os artefatos com wasm-pack
+#Windows
+$env:RUSTFLAGS="--cfg=web_sys_unstable_apis"
+wasm-pack build --release --target web --out-dir web/pkg
+#linux
+export RUSTFLAGS="--cfg=web_sys_unstable_apis"
 wasm-pack build --release --target web --out-dir web/pkg
 
 # 4) Sirva a pasta web/ em um servidor estático
@@ -72,12 +77,6 @@ COOKIES
 	"phone": "1234532"
 }
 BODY
-<<TIMEOUT
-5
-TIMEOUT
-<<REDIRECTS
-true
-REDIRECTS
 
 ```
 > METHOD, URL are required

@@ -6,6 +6,4 @@ pub struct RequestData {
     pub headers: HashMap<String, String>,
     pub cookies: HashMap<String, String>,
     pub body: Option<String>,
-    pub timeout_secs: Option<u64>,
-    pub follow_redirects: Option<bool>,
 }
