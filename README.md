@@ -67,10 +67,6 @@ URL
 Authorization: Bearer 123
 Id: 01
 HEADERS
-<<COOKIES
-Session: abc123
-User: name
-COOKIES
 <<BODY
 {
 	"name": "name",

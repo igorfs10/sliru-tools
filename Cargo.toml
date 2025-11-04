@@ -2,6 +2,10 @@
 name = "sliru-tools"
 version = "0.1.0"
 edition = "2024"
+description = "Pequena aplicação rust/slint com ferramentas simples"
+license = "MIT"
+repository = "https://github.com/igorfs10/sliru-tools"
+authors = ["Igorfs10"]
 
 [lib]
 name = "sliru_tools_lib"
@@ -22,12 +26,15 @@ md-5 = "0.10.6"
 sha1 = "0.10.6"
 sha2 = "0.10.9"
 rfd = "0.15.4"
-reqwest = { version = "0.12.24", features = ["cookies"] }
-tokio = { version = "1.48.0", features = ["rt", "time", "sync"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "0.2.105"
 wasm-bindgen-futures = "0.4.55"
+reqwest = { version = "0.12.24", default-features = false}
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio = { version = "1.48.0", features = ["rt-multi-thread", "time", "sync"] }
+reqwest = { version = "0.12.24" }
 
 [build-dependencies]
 slint-build = "1.14.1"

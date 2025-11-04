@@ -7,6 +7,8 @@ use md5::{Digest, Md5};
 use rfd::AsyncFileDialog;
 use sha1::Sha1;
 use sha2::Sha256;
+use slint::SharedString;
+
 
 pub mod enums;
 pub mod services;
@@ -19,6 +21,10 @@ slint::include_modules!();
 //     // nova_janela.run().unwrap();
 //     nova_janela.show().unwrap();
 // }
+
+#[cfg(not(target_arch = "wasm32"))]
+use std::sync::OnceLock;
+
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -36,6 +42,39 @@ pub fn set_language(language: &str) {
 #[cfg(target_arch = "wasm32")]
 pub async fn start_wasm() -> Result<(), JsValue> {
     Ok(start()?)
+}
+
+// Executor unificado: no desktop usa Tokio multi-thread; no WASM usa o executor do Slint
+#[cfg(not(target_arch = "wasm32"))]
+static RUNTIME: OnceLock<tokio::runtime::Runtime> = OnceLock::new();
+
+#[cfg(not(target_arch = "wasm32"))]
+fn spawn_task<Fut, T>(fut: Fut, on_done: impl FnOnce(T) + Send + 'static)
+where
+    Fut: std::future::Future<Output = T> + Send + 'static,
+    T: Send + 'static,
+{
+    let rt = RUNTIME.get_or_init(|| {
+        tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .build()
+            .expect("Erro ao criar runtime tokio")
+    });
+    rt.spawn(async move {
+        let out = fut.await;
+        on_done(out);
+    });
+}
+
+#[cfg(target_arch = "wasm32")]
+fn spawn_task<Fut, T>(fut: Fut, on_done: impl FnOnce(T) + 'static)
+where
+    Fut: std::future::Future<Output = T> + 'static,
+{
+    let _ = slint::spawn_local(async move {
+        let out = fut.await;
+        on_done(out);
+    });
 }
 
 pub fn start() -> Result<(), slint::PlatformError> {
@@ -56,43 +95,48 @@ pub fn start() -> Result<(), slint::PlatformError> {
     ui.on_hdoc_request_execute({
         let ui_handle = ui.as_weak();
         move || {
-            let ui = ui_handle.unwrap();
-            let ui_clone = ui_handle.unwrap();
+            let ui = ui_handle.upgrade().unwrap();
             let input_text = ui.get_hdocRequestInputText();
+
             match crate::services::hdoc_request::parse_heredoc_request(&input_text) {
                 Ok(request_data) => {
-                    let rt = tokio::runtime::Builder::new_current_thread()
-                        .enable_all()
-                        .build()
-                        .expect("Erro ao criar runtime tokio");
-
-                    rt.handle().spawn(async move{
-                        match crate::services::hdoc_request::send_request(&request_data).await {
-                            Ok(result) => {
-                                let mut output = format!("Status Code: {}\n", result.status_code);
-                                output.push_str("Headers:\n");
-                                for (k, v) in result.headers {
-                                    output.push_str(&format!("{}: {}\n", k, v));
+                    let ui_weak = ui.as_weak();
+                    spawn_task(
+                        async move { crate::services::hdoc_request::send_request(&request_data).await },
+                        move |result| {
+                            let _ = slint::invoke_from_event_loop(move || {
+                                if let Some(ui) = ui_weak.upgrade() {
+                                    match result {
+                                        Ok(result) => {
+                                            let mut output = format!(
+                                                "Status Code: {}\n",
+                                                result.status_code
+                                            );
+                                            output.push_str("Headers:\n");
+                                            for (k, v) in result.headers {
+                                                output.push_str(&format!("{}: {}\n", k, v));
+                                            }
+                                            output.push_str("\nBody:\n");
+                                            output.push_str(&result.body);
+                                            ui.set_hdocRequestOutputText(SharedString::from(output));
+                                        }
+                                        Err(e) => {
+                                            ui.set_hdocRequestOutputText(SharedString::from(format!(
+                                                "Error executing request: {}",
+                                                e
+                                            )));
+                                        }
+                                    }
                                 }
-                                output.push_str("\nBody:\n");
-                                output.push_str(&result.body);
-                                slint::invoke_from_event_loop(move || {
-                                    ui_clone.set_hdocRequestOutputText(output.into());
-                                });
-                            }
-                            Err(e) => {
-                                slint::invoke_from_event_loop(move || {
-                                    let ui = ui_handle.unwrap();
-                                    ui.set_hdocRequestOutputText(
-                                        format!("Error executing request: {}", e).into(),
-                                    );
-                                });
-                            }
-                        }
-                    });
+                            });
+                        },
+                    );
                 }
                 Err(e) => {
-                    ui.set_hdocRequestOutputText(format!("Error parsing request: {}", e).into());
+                    ui.set_hdocRequestOutputText(SharedString::from(format!(
+                        "Error parsing request: {}",
+                        e
+                    )));
                 }
             }
         }

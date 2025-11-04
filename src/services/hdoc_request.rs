@@ -8,7 +8,6 @@ pub fn parse_heredoc_request(input: &str) -> Result<RequestData, String> {
     let mut method: Option<String> = None;
     let mut url: Option<String> = None;
     let mut headers = HashMap::new();
-    let mut cookies = HashMap::new();
     let mut body: Option<String> = None;
 
     let lines: Vec<&str> = input.lines().collect();
@@ -36,13 +35,6 @@ pub fn parse_heredoc_request(input: &str) -> Result<RequestData, String> {
                     for line in content.lines() {
                         if let Some((k, v)) = line.split_once(':') {
                             headers.insert(k.trim().to_string(), v.trim().to_string());
-                        }
-                    }
-                }
-                "COOKIES" => {
-                    for line in content.lines() {
-                        if let Some((k, v)) = line.split_once(':') {
-                            cookies.insert(k.trim().to_string(), v.trim().to_string());
                         }
                     }
                 }
@@ -77,7 +69,6 @@ pub fn parse_heredoc_request(input: &str) -> Result<RequestData, String> {
         method: Some(method),
         url: Some(url),
         headers,
-        cookies,
         body,
     })
 }
@@ -103,17 +94,6 @@ pub async fn send_request(req: &RequestData) -> Result<RequestResult, String> {
     // headers
     for (k, v) in &req.headers {
         request = request.header(k, v);
-    }
-
-    // cookies
-    if !req.cookies.is_empty() {
-        let cookie_header = req
-            .cookies
-            .iter()
-            .map(|(k, v)| format!("{k}={v}"))
-            .collect::<Vec<_>>()
-            .join("; ");
-        request = request.header("Cookie", cookie_header);
     }
 
     // corpo (se houver)
