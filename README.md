@@ -73,7 +73,5 @@ HEADERS
 	"phone": "1234532"
 }
 BODY
-
 ```
-
 > METHOD and URL are required
