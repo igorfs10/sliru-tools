@@ -21,7 +21,7 @@ serde = { version = "1.0.228", features = ["derive"], default-features = false }
 serde_json = { version = "1.0.145", default-features = false, features = ["std"] }
 csv = { version = "1.4.0", default-features = false }
 yaml-rust2 = { version = "0.10.4", default-features = false }
-quick-xml = { version = "0.38.3", default-features = false }
+quick-xml = { version = "0.38.4", default-features = false }
 md-5 = { version = "0.10.6", default-features = false }
 sha1 = { version = "0.10.6", default-features = false }
 sha2 = { version = "0.10.9", default-features = false }
