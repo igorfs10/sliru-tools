@@ -75,4 +75,5 @@ HEADERS
 BODY
 
 ```
-> METHOD, URL are required
+
+> METHOD and URL are required
