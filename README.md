@@ -59,14 +59,13 @@ mv sliru-tools.pot ../translations/
 
 ```
 <<METHOD
-POST
+GET
 METHOD
 <<URL
-https://httpbin.org/post
+https://igorfs10.github.io/PokemonSite/api/1/
 URL
 <<HEADERS
-Authorization: Bearer 123
-Id: 01
+Content-Type: application/json
 HEADERS
 <<BODY
 {
